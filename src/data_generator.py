@@ -13,26 +13,127 @@ from pyspark.rdd import RDD
 
 # Base vocabulary for synthetic documents (common English words)
 BASE_VOCABULARY = [
-    "the", "be", "to", "of", "and", "a", "in", "that", "have", "it",
-    "for", "not", "on", "with", "he", "as", "you", "do", "at", "this",
-    "but", "his", "by", "from", "they", "we", "say", "her", "she", "or",
-    "an", "will", "my", "one", "all", "would", "there", "their", "what",
-    "so", "up", "out", "if", "about", "who", "get", "which", "go", "me",
-    "when", "make", "can", "like", "time", "no", "just", "him", "know",
-    "take", "people", "into", "year", "your", "good", "some", "could",
-    "them", "see", "other", "than", "then", "now", "look", "only", "come",
-    "its", "over", "think", "also", "back", "after", "use", "two", "how",
-    "our", "work", "first", "well", "way", "even", "new", "want", "because",
-    "any", "these", "give", "day", "most", "us", "data", "system", "process",
-    "analysis", "method", "result", "study", "research", "model", "approach",
-    "algorithm", "function", "value", "set", "number", "problem", "solution"
+    "the",
+    "be",
+    "to",
+    "of",
+    "and",
+    "a",
+    "in",
+    "that",
+    "have",
+    "it",
+    "for",
+    "not",
+    "on",
+    "with",
+    "he",
+    "as",
+    "you",
+    "do",
+    "at",
+    "this",
+    "but",
+    "his",
+    "by",
+    "from",
+    "they",
+    "we",
+    "say",
+    "her",
+    "she",
+    "or",
+    "an",
+    "will",
+    "my",
+    "one",
+    "all",
+    "would",
+    "there",
+    "their",
+    "what",
+    "so",
+    "up",
+    "out",
+    "if",
+    "about",
+    "who",
+    "get",
+    "which",
+    "go",
+    "me",
+    "when",
+    "make",
+    "can",
+    "like",
+    "time",
+    "no",
+    "just",
+    "him",
+    "know",
+    "take",
+    "people",
+    "into",
+    "year",
+    "your",
+    "good",
+    "some",
+    "could",
+    "them",
+    "see",
+    "other",
+    "than",
+    "then",
+    "now",
+    "look",
+    "only",
+    "come",
+    "its",
+    "over",
+    "think",
+    "also",
+    "back",
+    "after",
+    "use",
+    "two",
+    "how",
+    "our",
+    "work",
+    "first",
+    "well",
+    "way",
+    "even",
+    "new",
+    "want",
+    "because",
+    "any",
+    "these",
+    "give",
+    "day",
+    "most",
+    "us",
+    "data",
+    "system",
+    "process",
+    "analysis",
+    "method",
+    "result",
+    "study",
+    "research",
+    "model",
+    "approach",
+    "algorithm",
+    "function",
+    "value",
+    "set",
+    "number",
+    "problem",
+    "solution",
 ]
 
 
 def generate_random_document(
-    num_words: int = 50,
-    vocabulary: List[str] = None,
-    seed: Optional[int] = None
+    num_words: int = 50, vocabulary: List[str] = None, seed: Optional[int] = None
 ) -> str:
     """
     Generate a random document from vocabulary.
@@ -56,10 +157,7 @@ def generate_random_document(
 
 
 def generate_similar_document(
-    base_document: str,
-    similarity: float,
-    vocabulary: List[str] = None,
-    seed: Optional[int] = None
+    base_document: str, similarity: float, vocabulary: List[str] = None, seed: Optional[int] = None
 ) -> str:
     """
     Generate a document with approximate target similarity to base.
@@ -91,10 +189,7 @@ def generate_similar_document(
 
 
 def generate_document_pairs(
-    num_pairs: int,
-    similarity_levels: List[float] = None,
-    doc_length: int = 50,
-    seed: int = 42
+    num_pairs: int, similarity_levels: List[float] = None, doc_length: int = 50, seed: int = 42
 ) -> List[Tuple[str, str, str, float]]:
     """
     Generate pairs of documents with known similarities.
@@ -132,7 +227,7 @@ def generate_corpus(
     doc_length: int = 50,
     num_similar_pairs: int = 10,
     similarity_range: Tuple[float, float] = (0.5, 0.9),
-    seed: int = 42
+    seed: int = 42,
 ) -> Tuple[List[Tuple[str, str]], List[Tuple[str, str, float]]]:
     """
     Generate a corpus with some similar document pairs.
@@ -171,7 +266,9 @@ def generate_corpus(
 
             # Create similar version
             sim = random.uniform(*similarity_range)
-            similar_text = generate_similar_document(base_text, sim, seed=seed + num_documents + pairs_created)
+            similar_text = generate_similar_document(
+                base_text, sim, seed=seed + num_documents + pairs_created
+            )
 
             # Replace existing document with similar version
             if available_indices:
@@ -189,7 +286,7 @@ def create_sample_rdd(
     num_documents: int = 20,
     doc_length: int = 50,
     num_similar_pairs: int = 5,
-    seed: int = 42
+    seed: int = 42,
 ) -> Tuple[RDD, List[Tuple[str, str, float]]]:
     """
     Create a sample RDD for testing.
@@ -208,7 +305,7 @@ def create_sample_rdd(
         num_documents=num_documents,
         doc_length=doc_length,
         num_similar_pairs=num_similar_pairs,
-        seed=seed
+        seed=seed,
     )
 
     docs_rdd = sc.parallelize(documents)
@@ -218,7 +315,10 @@ def create_sample_rdd(
 # Pre-generated tiny sample for smoke tests
 TINY_SAMPLE = [
     ("doc_001", "the quick brown fox jumps over the lazy dog near the river"),
-    ("doc_002", "the quick brown fox leaps over the lazy dog near the stream"),  # Similar to doc_001
+    (
+        "doc_002",
+        "the quick brown fox leaps over the lazy dog near the stream",
+    ),  # Similar to doc_001
     ("doc_003", "data analysis and machine learning algorithms for big data"),
     ("doc_004", "data analysis and deep learning methods for big data"),  # Similar to doc_003
     ("doc_005", "the sun rises in the east and sets in the west every day"),

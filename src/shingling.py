@@ -28,13 +28,13 @@ def text_to_shingles(text: str, k: int = 3, char_level: bool = True) -> Set[str]
         # Character-level: sliding window of k characters
         if len(text) < k:
             return {text} if text else set()
-        return {text[i:i+k] for i in range(len(text) - k + 1)}
+        return {text[i : i + k] for i in range(len(text) - k + 1)}
     else:
         # Word-level: sliding window of k words
         words = text.split()
         if len(words) < k:
             return {" ".join(words)} if words else set()
-        return {" ".join(words[i:i+k]) for i in range(len(words) - k + 1)}
+        return {" ".join(words[i : i + k]) for i in range(len(words) - k + 1)}
 
 
 def shingle_document(doc_id: str, text: str, k: int = 3, char_level: bool = True) -> tuple:
@@ -54,11 +54,7 @@ def shingle_document(doc_id: str, text: str, k: int = 3, char_level: bool = True
     return (doc_id, shingles)
 
 
-def create_shingle_rdd(
-    docs_rdd: RDD,
-    k: int = 3,
-    char_level: bool = True
-) -> RDD:
+def create_shingle_rdd(docs_rdd: RDD, k: int = 3, char_level: bool = True) -> RDD:
     """
     Transform an RDD of (doc_id, text) to (doc_id, shingle_set).
 
@@ -70,9 +66,7 @@ def create_shingle_rdd(
     Returns:
         RDD of (doc_id, shingle_set) tuples
     """
-    return docs_rdd.map(
-        lambda x: shingle_document(x[0], x[1], k, char_level)
-    )
+    return docs_rdd.map(lambda x: shingle_document(x[0], x[1], k, char_level))
 
 
 def get_shingle_vocabulary(shingles_rdd: RDD) -> dict:
@@ -85,19 +79,11 @@ def get_shingle_vocabulary(shingles_rdd: RDD) -> dict:
     Returns:
         Dictionary mapping shingle -> integer ID
     """
-    all_shingles = (
-        shingles_rdd
-        .flatMap(lambda x: x[1])
-        .distinct()
-        .collect()
-    )
+    all_shingles = shingles_rdd.flatMap(lambda x: x[1]).distinct().collect()
     return {shingle: idx for idx, shingle in enumerate(sorted(all_shingles))}
 
 
-def shingles_to_ids(
-    shingles_rdd: RDD,
-    vocab: dict
-) -> RDD:
+def shingles_to_ids(shingles_rdd: RDD, vocab: dict) -> RDD:
     """
     Convert shingle sets to sets of integer IDs using vocabulary.
 

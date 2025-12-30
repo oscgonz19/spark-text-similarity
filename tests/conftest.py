@@ -9,12 +9,13 @@ from pyspark.sql import SparkSession
 @pytest.fixture(scope="session")
 def spark():
     """Create a SparkSession for testing."""
-    spark = SparkSession.builder \
-        .appName("LSH-Tests") \
-        .master("local[2]") \
-        .config("spark.driver.memory", "1g") \
-        .config("spark.sql.shuffle.partitions", "2") \
+    spark = (
+        SparkSession.builder.appName("LSH-Tests")
+        .master("local[2]")
+        .config("spark.driver.memory", "1g")
+        .config("spark.sql.shuffle.partitions", "2")
         .getOrCreate()
+    )
 
     spark.sparkContext.setLogLevel("ERROR")
 

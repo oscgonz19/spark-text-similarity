@@ -31,10 +31,7 @@ def jaccard_similarity(set_a: Set, set_b: Set) -> float:
     return intersection / union if union > 0 else 0.0
 
 
-def compute_all_pairs_jaccard(
-    shingles_rdd: RDD,
-    threshold: float = 0.0
-) -> RDD:
+def compute_all_pairs_jaccard(shingles_rdd: RDD, threshold: float = 0.0) -> RDD:
     """
     Compute Jaccard similarity for all document pairs (brute force).
 
@@ -92,10 +89,7 @@ def compute_pairwise_jaccard_distributed(
     return candidate_pairs.map(compute_pair_similarity)
 
 
-def find_similar_pairs(
-    shingles_rdd: RDD,
-    threshold: float = 0.5
-) -> RDD:
+def find_similar_pairs(shingles_rdd: RDD, threshold: float = 0.5) -> RDD:
     """
     Find all document pairs with Jaccard similarity >= threshold.
 

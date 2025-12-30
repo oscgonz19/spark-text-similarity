@@ -16,6 +16,7 @@ from .shingling import create_shingle_rdd, get_shingle_vocabulary, shingles_to_i
 @dataclass
 class LSHConfig:
     """Configuration for LSH pipeline."""
+
     shingle_size: int = 3
     char_level: bool = True
     num_hashes: int = 100
@@ -27,6 +28,7 @@ class LSHConfig:
 @dataclass
 class PipelineResult:
     """Results from running the LSH pipeline."""
+
     candidate_pairs: RDD
     verified_pairs: RDD
     num_candidates: int
@@ -34,10 +36,7 @@ class PipelineResult:
     config: LSHConfig
 
 
-def run_lsh_pipeline(
-    docs_rdd: RDD,
-    config: Optional[LSHConfig] = None
-) -> PipelineResult:
+def run_lsh_pipeline(docs_rdd: RDD, config: Optional[LSHConfig] = None) -> PipelineResult:
     """
     Run the complete LSH pipeline.
 
@@ -52,11 +51,7 @@ def run_lsh_pipeline(
         config = LSHConfig()
 
     # Step 1: Shingling
-    shingles_rdd = create_shingle_rdd(
-        docs_rdd,
-        k=config.shingle_size,
-        char_level=config.char_level
-    )
+    shingles_rdd = create_shingle_rdd(docs_rdd, k=config.shingle_size, char_level=config.char_level)
 
     # Step 2: Build vocabulary and convert to IDs
     vocab = get_shingle_vocabulary(shingles_rdd)
@@ -64,9 +59,7 @@ def run_lsh_pipeline(
 
     # Step 3: Compute MinHash signatures
     signatures_rdd = compute_signatures_rdd(
-        shingle_ids_rdd,
-        num_hashes=config.num_hashes,
-        seed=config.seed
+        shingle_ids_rdd, num_hashes=config.num_hashes, seed=config.seed
     )
 
     # Step 4: LSH to find candidate pairs
@@ -74,10 +67,9 @@ def run_lsh_pipeline(
     num_candidates = candidate_pairs.count()
 
     # Step 5: Verify candidates with exact Jaccard
-    verified_pairs = compute_pairwise_jaccard_distributed(
-        shingles_rdd,
-        candidate_pairs
-    ).filter(lambda x: x[1] >= config.similarity_threshold)
+    verified_pairs = compute_pairwise_jaccard_distributed(shingles_rdd, candidate_pairs).filter(
+        lambda x: x[1] >= config.similarity_threshold
+    )
 
     num_similar = verified_pairs.count()
 
@@ -86,15 +78,12 @@ def run_lsh_pipeline(
         verified_pairs=verified_pairs,
         num_candidates=num_candidates,
         num_similar=num_similar,
-        config=config
+        config=config,
     )
 
 
 def run_baseline(
-    docs_rdd: RDD,
-    shingle_size: int = 3,
-    char_level: bool = True,
-    threshold: float = 0.5
+    docs_rdd: RDD, shingle_size: int = 3, char_level: bool = True, threshold: float = 0.5
 ) -> RDD:
     """
     Run baseline exact Jaccard computation for all pairs.
@@ -112,10 +101,7 @@ def run_baseline(
     return compute_all_pairs_jaccard(shingles_rdd, threshold)
 
 
-def evaluate_lsh(
-    lsh_result: PipelineResult,
-    ground_truth_rdd: RDD
-) -> Dict[str, float]:
+def evaluate_lsh(lsh_result: PipelineResult, ground_truth_rdd: RDD) -> Dict[str, float]:
     """
     Evaluate LSH performance against ground truth.
 
@@ -156,5 +142,5 @@ def evaluate_lsh(
         "false_positives": len(lsh_pairs - true_pairs),
         "false_negatives": len(true_pairs - lsh_pairs),
         "num_lsh_pairs": len(lsh_pairs),
-        "num_true_pairs": len(true_pairs)
+        "num_true_pairs": len(true_pairs),
     }

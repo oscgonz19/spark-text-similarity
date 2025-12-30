@@ -17,6 +17,7 @@ from .pipeline import LSHConfig, evaluate_lsh, run_lsh_pipeline
 @dataclass
 class ExperimentResult:
     """Result of a single LSH experiment."""
+
     num_bands: int
     rows_per_band: int
     num_hashes: int
@@ -39,7 +40,7 @@ def run_single_experiment(
     num_bands: int,
     num_hashes: int = 100,
     shingle_size: int = 3,
-    similarity_threshold: float = 0.5
+    similarity_threshold: float = 0.5,
 ) -> ExperimentResult:
     """
     Run a single LSH experiment with given parameters.
@@ -61,7 +62,7 @@ def run_single_experiment(
         shingle_size=shingle_size,
         num_hashes=num_hashes,
         num_bands=num_bands,
-        similarity_threshold=similarity_threshold
+        similarity_threshold=similarity_threshold,
     )
 
     start_time = time.time()
@@ -84,7 +85,7 @@ def run_single_experiment(
         true_positives=metrics["true_positives"],
         false_positives=metrics["false_positives"],
         false_negatives=metrics["false_negatives"],
-        runtime_seconds=runtime
+        runtime_seconds=runtime,
     )
 
 
@@ -93,7 +94,7 @@ def run_band_sweep(
     ground_truth_rdd: RDD,
     band_values: List[int] = None,
     num_hashes: int = 100,
-    similarity_threshold: float = 0.5
+    similarity_threshold: float = 0.5,
 ) -> List[ExperimentResult]:
     """
     Run experiments sweeping across different band configurations.
@@ -119,7 +120,7 @@ def run_band_sweep(
             ground_truth_rdd=ground_truth_rdd,
             num_bands=num_bands,
             num_hashes=num_hashes,
-            similarity_threshold=similarity_threshold
+            similarity_threshold=similarity_threshold,
         )
         results.append(result)
 
@@ -164,22 +165,40 @@ def results_to_csv(results: List[ExperimentResult]) -> str:
         CSV string
     """
     headers = [
-        "num_bands", "rows_per_band", "num_hashes", "theoretical_threshold",
-        "precision", "recall", "f1", "num_candidates", "num_true_pairs",
-        "num_lsh_pairs", "true_positives", "false_positives", "false_negatives",
-        "runtime_seconds"
+        "num_bands",
+        "rows_per_band",
+        "num_hashes",
+        "theoretical_threshold",
+        "precision",
+        "recall",
+        "f1",
+        "num_candidates",
+        "num_true_pairs",
+        "num_lsh_pairs",
+        "true_positives",
+        "false_positives",
+        "false_negatives",
+        "runtime_seconds",
     ]
 
     lines = [",".join(headers)]
 
     for r in results:
         values = [
-            str(r.num_bands), str(r.rows_per_band), str(r.num_hashes),
-            f"{r.theoretical_threshold:.4f}", f"{r.precision:.4f}",
-            f"{r.recall:.4f}", f"{r.f1:.4f}", str(r.num_candidates),
-            str(r.num_true_pairs), str(r.num_lsh_pairs), str(r.true_positives),
-            str(r.false_positives), str(r.false_negatives),
-            f"{r.runtime_seconds:.4f}"
+            str(r.num_bands),
+            str(r.rows_per_band),
+            str(r.num_hashes),
+            f"{r.theoretical_threshold:.4f}",
+            f"{r.precision:.4f}",
+            f"{r.recall:.4f}",
+            f"{r.f1:.4f}",
+            str(r.num_candidates),
+            str(r.num_true_pairs),
+            str(r.num_lsh_pairs),
+            str(r.true_positives),
+            str(r.false_positives),
+            str(r.false_negatives),
+            f"{r.runtime_seconds:.4f}",
         ]
         lines.append(",".join(values))
 
@@ -209,19 +228,19 @@ def analyze_tradeoffs(results: List[ExperimentResult]) -> Dict[str, Any]:
             "config": f"b={best_f1.num_bands}, r={best_f1.rows_per_band}",
             "f1": best_f1.f1,
             "precision": best_f1.precision,
-            "recall": best_f1.recall
+            "recall": best_f1.recall,
         },
         "best_precision": {
             "config": f"b={best_precision.num_bands}, r={best_precision.rows_per_band}",
-            "precision": best_precision.precision
+            "precision": best_precision.precision,
         },
         "best_recall": {
             "config": f"b={best_recall.num_bands}, r={best_recall.rows_per_band}",
-            "recall": best_recall.recall
+            "recall": best_recall.recall,
         },
         "fastest": {
             "config": f"b={fastest.num_bands}, r={fastest.rows_per_band}",
-            "runtime": fastest.runtime_seconds
+            "runtime": fastest.runtime_seconds,
         },
-        "total_experiments": len(results)
+        "total_experiments": len(results),
     }

@@ -17,10 +17,7 @@ from typing import List, Tuple
 from pyspark.rdd import RDD
 
 
-def split_into_bands(
-    signature: List[int],
-    num_bands: int
-) -> List[Tuple[int, Tuple]]:
+def split_into_bands(signature: List[int], num_bands: int) -> List[Tuple[int, Tuple]]:
     """
     Split a signature into bands.
 
@@ -44,10 +41,7 @@ def split_into_bands(
     return bands
 
 
-def lsh_candidates(
-    signatures_rdd: RDD,
-    num_bands: int
-) -> RDD:
+def lsh_candidates(signatures_rdd: RDD, num_bands: int) -> RDD:
     """
     Find candidate pairs using LSH banding.
 
@@ -58,6 +52,7 @@ def lsh_candidates(
     Returns:
         RDD of (doc_id_1, doc_id_2) candidate pairs (deduplicated)
     """
+
     # Step 1: Create (band_idx, band_hash) -> doc_id mappings
     def emit_band_buckets(doc_sig):
         doc_id, signature = doc_sig
@@ -84,11 +79,9 @@ def lsh_candidates(
                 pairs.append(pair)
         return pairs
 
-    candidate_pairs = (
-        buckets_grouped
-        .flatMap(generate_pairs)
-        .distinct()  # Remove duplicate pairs across bands
-    )
+    candidate_pairs = buckets_grouped.flatMap(
+        generate_pairs
+    ).distinct()  # Remove duplicate pairs across bands
 
     return candidate_pairs
 
@@ -132,15 +125,12 @@ def candidate_probability(similarity: float, num_bands: int, rows_per_band: int)
     # P(at least one band matches) = 1 - P(no band matches)
     # P(no band matches) = (1 - P(band matches))^b
     # P(band matches) = s^r (all r rows in band must match)
-    prob_band_match = similarity ** rows_per_band
+    prob_band_match = similarity**rows_per_band
     prob_no_band_match = (1 - prob_band_match) ** num_bands
     return 1 - prob_no_band_match
 
 
-def find_optimal_params(
-    target_threshold: float,
-    signature_length: int = 100
-) -> Tuple[int, int]:
+def find_optimal_params(target_threshold: float, signature_length: int = 100) -> Tuple[int, int]:
     """
     Find optimal (bands, rows) for a target similarity threshold.
 
@@ -152,7 +142,7 @@ def find_optimal_params(
         Tuple of (num_bands, rows_per_band)
     """
     best_params = (1, signature_length)
-    best_diff = float('inf')
+    best_diff = float("inf")
 
     for b in range(1, signature_length + 1):
         if signature_length % b != 0:

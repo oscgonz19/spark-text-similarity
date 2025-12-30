@@ -37,10 +37,7 @@ def main():
     parser.add_argument("--shingle-size", type=int, default=3, help="Shingle size")
     args = parser.parse_args()
 
-    spark = SparkSession.builder \
-        .appName("LSH-Pipeline") \
-        .master("local[*]") \
-        .getOrCreate()
+    spark = SparkSession.builder.appName("LSH-Pipeline").master("local[*]").getOrCreate()
 
     sc = spark.sparkContext
     sc.setLogLevel("WARN")
@@ -64,7 +61,7 @@ def main():
         shingle_size=args.shingle_size,
         num_hashes=args.hashes,
         num_bands=args.bands,
-        similarity_threshold=args.threshold
+        similarity_threshold=args.threshold,
     )
 
     print("\nRunning LSH pipeline:")

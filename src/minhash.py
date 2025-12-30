@@ -37,9 +37,7 @@ def create_hash_functions(num_hashes: int, seed: int = 42) -> List[Tuple[int, in
 
 
 def minhash_signature(
-    shingle_ids: Set[int],
-    hash_params: List[Tuple[int, int]],
-    num_buckets: int = LARGE_PRIME
+    shingle_ids: Set[int], hash_params: List[Tuple[int, int]], num_buckets: int = LARGE_PRIME
 ) -> List[int]:
     """
     Compute MinHash signature for a set of shingle IDs.
@@ -69,11 +67,7 @@ def minhash_signature(
     return signature
 
 
-def compute_signatures_rdd(
-    shingle_ids_rdd: RDD,
-    num_hashes: int = 100,
-    seed: int = 42
-) -> RDD:
+def compute_signatures_rdd(shingle_ids_rdd: RDD, num_hashes: int = 100, seed: int = 42) -> RDD:
     """
     Compute MinHash signatures for all documents.
 

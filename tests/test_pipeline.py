@@ -11,12 +11,7 @@ class TestLSHPipeline:
 
     def test_pipeline_runs(self, sample_docs):
         """Test that pipeline completes without error."""
-        config = LSHConfig(
-            shingle_size=3,
-            num_hashes=20,
-            num_bands=4,
-            similarity_threshold=0.3
-        )
+        config = LSHConfig(shingle_size=3, num_hashes=20, num_bands=4, similarity_threshold=0.3)
 
         result = run_lsh_pipeline(sample_docs, config)
 
@@ -27,12 +22,7 @@ class TestLSHPipeline:
 
     def test_pipeline_finds_similar_docs(self, sample_docs):
         """Test that pipeline finds known similar documents."""
-        config = LSHConfig(
-            shingle_size=3,
-            num_hashes=100,
-            num_bands=20,
-            similarity_threshold=0.3
-        )
+        config = LSHConfig(shingle_size=3, num_hashes=100, num_bands=20, similarity_threshold=0.3)
 
         result = run_lsh_pipeline(sample_docs, config)
         similar_pairs = result.verified_pairs.collect()
@@ -82,8 +72,8 @@ class TestEvaluation:
 
         config = LSHConfig(
             num_hashes=100,
-            num_bands=50,  # Many bands = high recall
-            similarity_threshold=0.3
+            num_bands=50,
+            similarity_threshold=0.3,  # Many bands = high recall
         )
 
         result = run_lsh_pipeline(docs_rdd, config)
@@ -101,11 +91,7 @@ class TestEvaluation:
         """Test evaluation with tiny sample data."""
         docs_rdd = get_tiny_sample(sc)
 
-        config = LSHConfig(
-            num_hashes=100,
-            num_bands=20,
-            similarity_threshold=0.3
-        )
+        config = LSHConfig(num_hashes=100, num_bands=20, similarity_threshold=0.3)
 
         result = run_lsh_pipeline(docs_rdd, config)
         ground_truth = run_baseline(docs_rdd, threshold=0.3)
@@ -124,12 +110,7 @@ class TestSmokeTest:
         """Quick smoke test with tiny dataset."""
         docs_rdd = get_tiny_sample(sc)
 
-        config = LSHConfig(
-            shingle_size=3,
-            num_hashes=20,
-            num_bands=4,
-            similarity_threshold=0.3
-        )
+        config = LSHConfig(shingle_size=3, num_hashes=20, num_bands=4, similarity_threshold=0.3)
 
         result = run_lsh_pipeline(docs_rdd, config)
 
@@ -140,12 +121,7 @@ class TestSmokeTest:
     @pytest.mark.smoke
     def test_data_generator(self, sc):
         """Smoke test for data generator."""
-        docs_rdd, pairs = create_sample_rdd(
-            sc,
-            num_documents=10,
-            num_similar_pairs=2,
-            seed=42
-        )
+        docs_rdd, pairs = create_sample_rdd(sc, num_documents=10, num_similar_pairs=2, seed=42)
 
         assert docs_rdd.count() == 10
         assert len(pairs) <= 2

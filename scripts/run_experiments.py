@@ -33,11 +33,12 @@ def main():
     args = parser.parse_args()
 
     # Create Spark session
-    spark = SparkSession.builder \
-        .appName("LSH-Experiments") \
-        .master("local[*]") \
-        .config("spark.driver.memory", "2g") \
+    spark = (
+        SparkSession.builder.appName("LSH-Experiments")
+        .master("local[*]")
+        .config("spark.driver.memory", "2g")
         .getOrCreate()
+    )
 
     sc = spark.sparkContext
     sc.setLogLevel("WARN")
@@ -50,19 +51,14 @@ def main():
         num_documents=args.num_docs,
         doc_length=args.doc_length,
         num_similar_pairs=args.num_similar,
-        seed=args.seed
+        seed=args.seed,
     )
     docs_rdd.cache()
 
     print("Computing ground truth (exact Jaccard)...")
 
     # Compute ground truth
-    ground_truth = run_baseline(
-        docs_rdd,
-        shingle_size=3,
-        char_level=True,
-        threshold=args.threshold
-    )
+    ground_truth = run_baseline(docs_rdd, shingle_size=3, char_level=True, threshold=args.threshold)
     ground_truth.cache()
 
     num_true_pairs = ground_truth.count()
@@ -70,8 +66,7 @@ def main():
 
     # Define band configurations to test
     # Use divisors of num_hashes
-    band_values = [b for b in [1, 2, 4, 5, 10, 20, 25, 50, 100]
-                   if args.num_hashes % b == 0]
+    band_values = [b for b in [1, 2, 4, 5, 10, 20, 25, 50, 100] if args.num_hashes % b == 0]
 
     print(f"\nRunning experiments with bands: {band_values}")
     print("-" * 60)
@@ -81,7 +76,7 @@ def main():
         ground_truth_rdd=ground_truth,
         band_values=band_values,
         num_hashes=args.num_hashes,
-        similarity_threshold=args.threshold
+        similarity_threshold=args.threshold,
     )
 
     # Print results table
@@ -91,8 +86,12 @@ def main():
     analysis = analyze_tradeoffs(results)
     print("\n=== Tradeoff Analysis ===")
     print(f"Best F1: {analysis['best_f1']['config']} -> F1={analysis['best_f1']['f1']:.3f}")
-    print(f"Best Precision: {analysis['best_precision']['config']} -> P={analysis['best_precision']['precision']:.3f}")
-    print(f"Best Recall: {analysis['best_recall']['config']} -> R={analysis['best_recall']['recall']:.3f}")
+    print(
+        f"Best Precision: {analysis['best_precision']['config']} -> P={analysis['best_precision']['precision']:.3f}"
+    )
+    print(
+        f"Best Recall: {analysis['best_recall']['config']} -> R={analysis['best_recall']['recall']:.3f}"
+    )
     print(f"Fastest: {analysis['fastest']['config']} -> {analysis['fastest']['runtime']:.2f}s")
 
     # Save results
