@@ -12,7 +12,8 @@ Key parameters:
 Probability of becoming candidates ≈ 1 - (1 - s^r)^b where s is true similarity.
 """
 
-from typing import List, Tuple, Dict
+from typing import List, Tuple
+
 from pyspark.rdd import RDD
 
 

@@ -4,7 +4,8 @@ Shingling module: Convert documents to sets of k-shingles.
 A k-shingle is a contiguous subsequence of k tokens (characters or words).
 """
 
-from typing import Set, List, Iterator
+from typing import Set
+
 from pyspark.rdd import RDD
 
 

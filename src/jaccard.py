@@ -4,9 +4,9 @@ Jaccard similarity: Exact computation for baseline comparison.
 Jaccard(A, B) = |A ∩ B| / |A ∪ B|
 """
 
-from typing import Set, List, Tuple
+from typing import Set
+
 from pyspark.rdd import RDD
-from itertools import combinations
 
 
 def jaccard_similarity(set_a: Set, set_b: Set) -> float:

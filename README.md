@@ -1,12 +1,28 @@
 # spark-text-similarity
 
-[![CI](https://github.com/oscgonz19/spark-text-similarity/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/spark-text-similarity/actions/workflows/ci.yml)
+[![CI](https://github.com/oscgonz19/spark-text-similarity/actions/workflows/ci.yml/badge.svg)](https://github.com/oscgonz19/spark-text-similarity/actions/workflows/ci.yml)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Scalable near-duplicate detection using Shingling + MinHash + LSH with Apache Spark.**
 
 Find similar documents in large corpora efficiently. Instead of comparing all O(n²) document pairs, LSH reduces comparisons to only likely candidates while maintaining high accuracy.
+
+---
+
+## Documentation
+
+Complete documentation is available in **English** and **Español**.
+
+| Document | EN | ES | Audience |
+|----------|----|----|----------|
+| **Case Study** | [EN](docs/en/CASE_STUDY.md) | [ES](docs/es/CASE_STUDY.md) | General |
+| **Executive Summary** | [EN](docs/en/EXECUTIVE_SUMMARY.md) | [ES](docs/es/EXECUTIVE_SUMMARY.md) | Recruiters / Managers |
+| **Technical Appendix** | [EN](docs/en/TECHNICAL_APPENDIX.md) | [ES](docs/es/TECHNICAL_APPENDIX.md) | Tech Leads / Engineers |
+| **Pipeline Explained** | [EN](docs/en/PIPELINE_EXPLAINED.md) | [ES](docs/es/PIPELINE_EXPLAINED.md) | Data Scientists / ML Engineers |
+| **Mathematical Formulas** | [EN](docs/en/MATHEMATICAL_FORMULAS.md) | [ES](docs/es/MATHEMATICAL_FORMULAS.md) | Statisticians / Quants |
+
+📁 [docs/en/](docs/en/) - English | 📁 [docs/es/](docs/es/) - Español
 
 ---
 
@@ -315,46 +331,6 @@ make test-cov
 # Lint and format
 make lint
 make format
-```
-
----
-
-## Documentation
-
-Complete documentation is available in **English** and **Español**.
-
-### Quick Links
-
-| Document | EN | ES | Audience |
-|----------|----|----|----------|
-| **Case Study** | [EN](docs/en/CASE_STUDY.md) | [ES](docs/es/CASE_STUDY.md) | General |
-| **Executive Summary** | [EN](docs/en/EXECUTIVE_SUMMARY.md) | [ES](docs/es/EXECUTIVE_SUMMARY.md) | Recruiters / Managers |
-| **Technical Appendix** | [EN](docs/en/TECHNICAL_APPENDIX.md) | [ES](docs/es/TECHNICAL_APPENDIX.md) | Tech Leads / Engineers |
-| **Pipeline Explained** | [EN](docs/en/PIPELINE_EXPLAINED.md) | [ES](docs/es/PIPELINE_EXPLAINED.md) | Data Scientists / ML Engineers |
-| **Mathematical Formulas** | [EN](docs/en/MATHEMATICAL_FORMULAS.md) | [ES](docs/es/MATHEMATICAL_FORMULAS.md) | Statisticians / Quants |
-
-### Documentation Index
-
-- [docs/en/](docs/en/) - All documentation in English
-- [docs/es/](docs/es/) - Toda la documentación en Español
-
-### Documentation Structure
-
-```
-docs/
-├── README.md           # Documentation index (bilingual)
-├── en/                 # English documentation
-│   ├── CASE_STUDY.md
-│   ├── EXECUTIVE_SUMMARY.md
-│   ├── TECHNICAL_APPENDIX.md
-│   ├── PIPELINE_EXPLAINED.md
-│   └── MATHEMATICAL_FORMULAS.md
-└── es/                 # Documentación en español
-    ├── CASE_STUDY.md
-    ├── EXECUTIVE_SUMMARY.md
-    ├── TECHNICAL_APPENDIX.md
-    ├── PIPELINE_EXPLAINED.md
-    └── MATHEMATICAL_FORMULAS.md
 ```
 
 ---

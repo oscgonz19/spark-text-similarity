@@ -1,14 +1,9 @@
 """Tests for end-to-end pipeline."""
 
 import pytest
-from src.pipeline import (
-    run_lsh_pipeline,
-    run_baseline,
-    evaluate_lsh,
-    LSHConfig,
-    PipelineResult
-)
-from src.data_generator import get_tiny_sample, create_sample_rdd
+
+from src.data_generator import create_sample_rdd, get_tiny_sample
+from src.pipeline import LSHConfig, PipelineResult, evaluate_lsh, run_baseline, run_lsh_pipeline
 
 
 class TestLSHPipeline:

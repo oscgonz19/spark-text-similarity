@@ -1,11 +1,6 @@
 """Tests for Jaccard similarity module."""
 
-import pytest
-from src.jaccard import (
-    jaccard_similarity,
-    compute_all_pairs_jaccard,
-    find_similar_pairs
-)
+from src.jaccard import compute_all_pairs_jaccard, find_similar_pairs, jaccard_similarity
 from src.shingling import create_shingle_rdd
 
 

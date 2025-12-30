@@ -16,8 +16,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from pyspark.sql import SparkSession
 
-from src.data_generator import get_tiny_sample, create_sample_rdd
-from src.pipeline import run_lsh_pipeline, LSHConfig
+from src.data_generator import create_sample_rdd, get_tiny_sample
+from src.pipeline import LSHConfig, run_lsh_pipeline
 
 
 def load_documents(spark, input_path: str):
@@ -67,7 +67,7 @@ def main():
         similarity_threshold=args.threshold
     )
 
-    print(f"\nRunning LSH pipeline:")
+    print("\nRunning LSH pipeline:")
     print(f"  - Shingle size: {config.shingle_size}")
     print(f"  - Signature length: {config.num_hashes}")
     print(f"  - Bands: {config.num_bands} (rows per band: {config.num_hashes // config.num_bands})")
@@ -75,7 +75,7 @@ def main():
 
     result = run_lsh_pipeline(docs_rdd, config)
 
-    print(f"\nResults:")
+    print("\nResults:")
     print(f"  - Candidate pairs: {result.num_candidates}")
     print(f"  - Similar pairs (>= {args.threshold}): {result.num_similar}")
 

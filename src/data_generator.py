@@ -6,11 +6,10 @@ All generated content is original and released under CC0 (public domain).
 """
 
 import random
-import string
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
+
 from pyspark import SparkContext
 from pyspark.rdd import RDD
-
 
 # Base vocabulary for synthetic documents (common English words)
 BASE_VOCABULARY = [

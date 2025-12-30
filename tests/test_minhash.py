@@ -1,11 +1,12 @@
 """Tests for MinHash module."""
 
 import pytest
+
 from src.minhash import (
-    create_hash_functions,
-    minhash_signature,
     compute_signatures_rdd,
-    estimate_similarity
+    create_hash_functions,
+    estimate_similarity,
+    minhash_signature,
 )
 from src.shingling import create_shingle_rdd, get_shingle_vocabulary, shingles_to_ids
 

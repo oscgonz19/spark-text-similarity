@@ -5,13 +5,13 @@ Analyzes precision/recall vs bands/rows configuration and runtime.
 """
 
 import time
-from typing import List, Dict, Any, Tuple
-from dataclasses import dataclass, asdict
-from pyspark import SparkContext
+from dataclasses import dataclass
+from typing import Any, Dict, List
+
 from pyspark.rdd import RDD
 
-from .pipeline import run_lsh_pipeline, run_baseline, evaluate_lsh, LSHConfig
-from .lsh import lsh_threshold, candidate_probability
+from .lsh import lsh_threshold
+from .pipeline import LSHConfig, evaluate_lsh, run_lsh_pipeline
 
 
 @dataclass

@@ -1,12 +1,10 @@
 """Tests for shingling module."""
 
-import pytest
 from src.shingling import (
-    text_to_shingles,
-    shingle_document,
     create_shingle_rdd,
     get_shingle_vocabulary,
-    shingles_to_ids
+    shingles_to_ids,
+    text_to_shingles,
 )
 
 

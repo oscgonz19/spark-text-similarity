@@ -40,9 +40,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/spark-text-similarity"
-Repository = "https://github.com/yourusername/spark-text-similarity"
-Issues = "https://github.com/yourusername/spark-text-similarity/issues"
+Homepage = "https://github.com/oscgonz19/spark-text-similarity"
+Repository = "https://github.com/oscgonz19/spark-text-similarity"
+Issues = "https://github.com/oscgonz19/spark-text-similarity/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -63,6 +63,8 @@ target-version = ["py39", "py310", "py311"]
 
 [tool.ruff]
 line-length = 100
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I", "N"]
 ignore = ["E501"]
 

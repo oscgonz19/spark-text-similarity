@@ -2,15 +2,15 @@
 End-to-end pipeline: Shingling -> MinHash -> LSH -> Candidate Pairs -> Verify.
 """
 
-from typing import Tuple, Dict, Any, Optional
 from dataclasses import dataclass
-from pyspark.rdd import RDD
-from pyspark.sql import SparkSession
+from typing import Dict, Optional
 
-from .shingling import create_shingle_rdd, get_shingle_vocabulary, shingles_to_ids
-from .minhash import compute_signatures_rdd
+from pyspark.rdd import RDD
+
+from .jaccard import compute_all_pairs_jaccard, compute_pairwise_jaccard_distributed
 from .lsh import lsh_candidates
-from .jaccard import compute_pairwise_jaccard_distributed, compute_all_pairs_jaccard
+from .minhash import compute_signatures_rdd
+from .shingling import create_shingle_rdd, get_shingle_vocabulary, shingles_to_ids
 
 
 @dataclass

@@ -1,15 +1,14 @@
 """Tests for LSH module."""
 
-import pytest
 from src.lsh import (
-    split_into_bands,
+    candidate_probability,
+    find_optimal_params,
     lsh_candidates,
     lsh_threshold,
-    candidate_probability,
-    find_optimal_params
+    split_into_bands,
 )
-from src.shingling import create_shingle_rdd, get_shingle_vocabulary, shingles_to_ids
 from src.minhash import compute_signatures_rdd
+from src.shingling import create_shingle_rdd, get_shingle_vocabulary, shingles_to_ids
 
 
 class TestSplitIntoBands:
