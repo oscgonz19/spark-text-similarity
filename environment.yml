@@ -1,0 +1,28 @@
+name: spark-text-similarity
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # Python
+  - python=3.11
+
+  # Java (required for Spark)
+  - openjdk=17
+
+  # Core dependencies
+  - pyspark=3.5.0
+  - py4j
+
+  # Development tools
+  - pytest>=7.0
+  - pytest-cov>=4.0
+  - black>=23.0
+  - ruff>=0.1
+  - mypy>=1.0
+
+  # Utilities
+  - pip
+
+  # Install package in editable mode via pip
+  - pip:
+    - -e .
