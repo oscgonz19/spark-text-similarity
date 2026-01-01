@@ -41,14 +41,9 @@ For a million documents, brute force is infeasible. LSH makes it tractable.
 
 ### The Solution: LSH Pipeline
 
-```
-┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│Documents │───▶│Shingling │───▶│ MinHash  │───▶│   LSH    │───▶│ Verify   │
-│          │    │(k-grams) │    │(signatures)│   │(banding) │    │(Jaccard) │
-└──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
-     N docs      Sets of         Compact         Candidate        Exact
-                 shingles        signatures      pairs            similarity
-```
+![LSH Pipeline](docs/images/pipeline_diagram.png)
+
+*The pipeline transforms N documents through four stages: shingling → MinHash signatures → LSH banding → Jaccard verification.*
 
 ### Real Experiment Results
 
@@ -69,6 +64,10 @@ For a million documents, brute force is infeasible. LSH makes it tractable.
 | 25 | 4 | 0.447 | 1.000 | 1.00 | 1.000 | 2,187 |
 | 50 | 2 | 0.141 | 1.000 | 1.00 | 1.000 | 4,947 |
 
+![Experiment Results](docs/images/experiment_results.png)
+
+*Comprehensive view: threshold behavior, F1 scores, candidate counts, and precision-recall tradeoffs across configurations.*
+
 **Key Insights:**
 
 1. **Sweet spot at b=20, r=5**: Threshold ≈ 0.55 matches our target of 0.5
@@ -81,25 +80,9 @@ For a million documents, brute force is infeasible. LSH makes it tractable.
 
 ### The Tradeoff Visualized
 
-```
-                    Recall
-                      ▲
-                 1.0 ─┤                    ●────●────●  (b=25,50,100)
-                      │                 ●
-                 0.8 ─┤              (b=20)
-                      │
-                 0.6 ─┤
-                      │
-                 0.4 ─┤
-                      │
-                 0.2 ─┤        ●  (b=10)
-                      │
-                 0.0 ─┼────●────●────●────┬────┬────┬──▶ Bands
-                      0    5   10   15   20   25   50
+![Metrics Comparison](docs/images/metrics_comparison.png)
 
-More bands = Lower threshold = Higher recall = More candidates
-Fewer bands = Higher threshold = Lower recall = Fewer candidates
-```
+*Precision, Recall, and F1 scores by band configuration. More bands = higher recall but more candidates to verify.*
 
 ---
 
@@ -114,7 +97,7 @@ Fewer bands = Higher threshold = Lower recall = Fewer candidates
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/spark-text-similarity.git
+git clone https://github.com/oscgonz19/spark-text-similarity.git
 cd spark-text-similarity
 
 # Option 1: Using conda (recommended)
@@ -198,6 +181,10 @@ where s = true Jaccard similarity
       b = number of bands
 ```
 
+![S-Curve](docs/images/s_curve.png)
+
+*The S-curve shows how candidate probability varies with similarity. Steeper curves = better separation between similar and dissimilar pairs.*
+
 ### Step 4: Verification
 
 Compute exact Jaccard only for candidate pairs. Filter by threshold.
@@ -276,6 +263,12 @@ spark-text-similarity/
 
 ## Choosing Parameters
 
+### Threshold Heatmap
+
+![Threshold Heatmap](docs/images/threshold_heatmap.png)
+
+*Different combinations of bands (b) and rows (r) produce different effective thresholds τ. Use this to select parameters for your target similarity.*
+
 ### For your similarity threshold τ:
 
 | Target τ | Recommended b | r (if n=100) | Expected behavior |
@@ -299,6 +292,14 @@ spark-text-similarity/
 ---
 
 ## Performance
+
+### Scalability Comparison
+
+![Scalability](docs/images/scalability.png)
+
+*Logarithmic comparison: Brute force O(n²) vs LSH. The 84% reduction in comparisons holds across all corpus sizes.*
+
+### Timing Benchmarks
 
 | Corpus Size | Shingling | MinHash | LSH | Total |
 |-------------|-----------|---------|-----|-------|
