@@ -53,25 +53,9 @@ En lugar de comparar todos los pares, usamos una técnica probabilística que:
 
 ### Vista General del Pipeline
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                      PIPELINE DE SIMILITUD LSH                              │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐ │
-│  │          │   │          │   │          │   │          │   │          │ │
-│  │Documentos│──▶│Shingling │──▶│ MinHash  │──▶│   LSH    │──▶│Verificar │ │
-│  │  Crudos  │   │          │   │          │   │ Banding  │   │          │ │
-│  │          │   │          │   │          │   │          │   │          │ │
-│  └──────────┘   └──────────┘   └──────────┘   └──────────┘   └──────────┘ │
-│       │              │              │              │              │        │
-│       ▼              ▼              ▼              ▼              ▼        │
-│    N docs      Conjuntos de     Firmas        Pares          Pares        │
-│               k-shingles por   compactas    candidatos     similares      │
-│                 documento     (100 ints)   de buckets    verificados      │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+![Diagrama del Pipeline](../images/pipeline_diagram.png)
+
+*El pipeline LSH transforma documentos a través de cuatro etapas: shingling, generación de firmas MinHash, banding LSH para detección de candidatos, y verificación Jaccard final.*
 
 ### Stack Tecnológico
 
@@ -170,6 +154,18 @@ def jaccard_similarity(set_a: Set, set_b: Set) -> float:
 | 25 | 4 | 0.447 | 1.000 | 1.00 | 1.000 | 2,187 |
 | 50 | 2 | 0.141 | 1.000 | 1.00 | 1.000 | 4,947 |
 
+![Resultados del Experimento](../images/experiment_results.png)
+
+*Visualización completa de los resultados: comportamiento del umbral, puntajes F1, conteo de candidatos, y trade-offs de precisión-recall en diferentes configuraciones.*
+
+### La Curva S de Probabilidad
+
+La probabilidad de que dos documentos se conviertan en candidatos sigue una curva en forma de S:
+
+![Curva S](../images/s_curve.png)
+
+*La curva S muestra cómo la probabilidad de convertirse en candidatos varía con la similitud. Cuanto más pronunciada la curva, mejor la separación entre pares similares y no similares.*
+
 ### Hallazgos Clave
 
 1. **Configuración óptima**: b=20, r=5 logra F1=0.917
@@ -191,6 +187,10 @@ def jaccard_similarity(set_a: Set, set_b: Set) -> float:
 ## 5. Análisis de Escalabilidad
 
 ### Rendimiento Proyectado
+
+![Comparación de Escalabilidad](../images/scalability.png)
+
+*Comparación logarítmica del enfoque de fuerza bruta vs LSH. La reducción del 84% en comparaciones se mantiene en todos los tamaños de corpus.*
 
 | Tamaño del Corpus | Todos los Pares | Candidatos LSH | Reducción |
 |-------------------|-----------------|----------------|-----------|
@@ -231,11 +231,21 @@ El pipeline aprovecha la computación distribuida de Spark:
 
 ### Precisión vs Recall
 
+![Comparación de Métricas](../images/metrics_comparison.png)
+
+*Visualización de cómo Precisión, Recall y F1 varían con diferentes configuraciones de bandas.*
+
 | Prioridad | Configuración | Trade-off |
 |-----------|---------------|-----------|
 | Alta Precisión | Menos bandas (b=10) | Puede perder algunos pares similares |
 | Balanceado | b=20, r=5 | Buena precisión y recall |
 | Alto Recall | Más bandas (b=50) | Más candidatos a verificar |
+
+### Mapa de Calor de Umbrales
+
+![Mapa de Calor de Umbrales](../images/threshold_heatmap.png)
+
+*El mapa de calor muestra cómo diferentes combinaciones de bandas (b) y filas (r) producen diferentes umbrales efectivos.*
 
 ### Memoria vs Precisión
 
@@ -315,7 +325,7 @@ Un sistema de similitud de documentos escalable que:
 
 ```bash
 # Clonar y configurar
-git clone https://github.com/yourusername/spark-text-similarity.git
+git clone https://github.com/oscgonz19/spark-text-similarity.git
 cd spark-text-similarity
 conda env create -f environment.yml
 conda activate spark-text-similarity

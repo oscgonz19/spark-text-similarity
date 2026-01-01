@@ -1,4 +1,4 @@
-.PHONY: setup setup-dev test test-smoke test-cov run-demo run-experiments clean lint format help
+.PHONY: setup setup-dev test test-smoke test-cov run-demo run-experiments visualizations clean lint format help
 
 # Default Python and pip
 PYTHON ?= python3
@@ -26,6 +26,7 @@ help:
 	@echo "Running:"
 	@echo "  make run-demo     Run pipeline with demo data"
 	@echo "  make run-experiments  Run full experiment suite"
+	@echo "  make visualizations   Generate documentation charts"
 	@echo ""
 	@echo "Code Quality:"
 	@echo "  make lint         Run linters (ruff, mypy)"
@@ -82,6 +83,11 @@ run-experiments-large:
 		--doc-length 150 \
 		--num-similar 40 \
 		--output-dir $(REPORTS_DIR)
+
+visualizations:
+	@echo "Generating visualizations..."
+	@mkdir -p docs/images
+	$(PYTHON) -c "from src.visualizations import generate_all_visualizations; generate_all_visualizations()"
 
 # =============================================================================
 # Code Quality

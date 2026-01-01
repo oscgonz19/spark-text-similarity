@@ -53,25 +53,9 @@ Instead of comparing all pairs, we use a probabilistic technique that:
 
 ### Pipeline Overview
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        LSH SIMILARITY PIPELINE                              │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐ │
-│  │          │   │          │   │          │   │          │   │          │ │
-│  │   Raw    │──▶│ Shingling│──▶│ MinHash  │──▶│   LSH    │──▶│  Verify  │ │
-│  │Documents │   │          │   │          │   │ Banding  │   │          │ │
-│  │          │   │          │   │          │   │          │   │          │ │
-│  └──────────┘   └──────────┘   └──────────┘   └──────────┘   └──────────┘ │
-│       │              │              │              │              │        │
-│       ▼              ▼              ▼              ▼              ▼        │
-│    N docs      Sets of k-      Compact       Candidate      Verified      │
-│               shingles per   signatures     pairs from     similar        │
-│                 document     (100 ints)      buckets        pairs         │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+![Pipeline Diagram](../images/pipeline_diagram.png)
+
+*The LSH pipeline transforms documents through four stages: shingling, MinHash signature generation, LSH banding for candidate detection, and final Jaccard verification.*
 
 ### Technology Stack
 
@@ -170,6 +154,18 @@ def jaccard_similarity(set_a: Set, set_b: Set) -> float:
 | 25 | 4 | 0.447 | 1.000 | 1.00 | 1.000 | 2,187 |
 | 50 | 2 | 0.141 | 1.000 | 1.00 | 1.000 | 4,947 |
 
+![Experiment Results](../images/experiment_results.png)
+
+*Comprehensive visualization of experiment results: threshold behavior, F1 scores, candidate counts, and precision-recall trade-offs across different configurations.*
+
+### The S-Curve Probability
+
+The probability of two documents becoming candidates follows an S-shaped curve:
+
+![S-Curve](../images/s_curve.png)
+
+*The S-curve shows how the probability of becoming candidates varies with similarity. The steeper the curve, the better the separation between similar and dissimilar pairs.*
+
 ### Key Findings
 
 1. **Optimal configuration**: b=20, r=5 achieves F1=0.917
@@ -191,6 +187,10 @@ def jaccard_similarity(set_a: Set, set_b: Set) -> float:
 ## 5. Scalability Analysis
 
 ### Projected Performance
+
+![Scalability Comparison](../images/scalability.png)
+
+*Logarithmic comparison of brute force vs LSH approach. The 84% reduction in comparisons holds across all corpus sizes.*
 
 | Corpus Size | All Pairs | LSH Candidates | Reduction |
 |-------------|-----------|----------------|-----------|
@@ -231,11 +231,21 @@ The pipeline leverages Spark's distributed computing:
 
 ### Precision vs Recall
 
+![Metrics Comparison](../images/metrics_comparison.png)
+
+*Visualization of how Precision, Recall, and F1 vary with different band configurations.*
+
 | Priority | Configuration | Trade-off |
 |----------|---------------|-----------|
 | High Precision | Fewer bands (b=10) | May miss some similar pairs |
 | Balanced | b=20, r=5 | Good precision and recall |
 | High Recall | More bands (b=50) | More candidates to verify |
+
+### Threshold Heatmap
+
+![Threshold Heatmap](../images/threshold_heatmap.png)
+
+*The heatmap shows how different combinations of bands (b) and rows (r) produce different effective thresholds.*
 
 ### Memory vs Accuracy
 
