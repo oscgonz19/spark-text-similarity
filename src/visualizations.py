@@ -5,12 +5,11 @@ Generates charts and diagrams for documentation and analysis.
 """
 
 import os
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 
-import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
 import numpy as np
-
 
 # Set style for all plots
 plt.style.use("seaborn-v0_8-whitegrid")
@@ -31,7 +30,7 @@ def s_curve_probability(s: float, b: int, r: int) -> float:
 
 def lsh_threshold(b: int, r: int) -> float:
     """Calculate the threshold where P(candidate) = 0.5."""
-    return (1 / b) ** (1 / r)
+    return float((1 / b) ** (1 / r))
 
 
 def plot_s_curve(
@@ -125,9 +124,9 @@ def plot_metrics_comparison(
     x = np.arange(len(bands))
     width = 0.25
 
-    bars1 = ax1.bar(x - width, precision, width, label="Precision", color=COLORS["primary"])
-    bars2 = ax1.bar(x, recall, width, label="Recall", color=COLORS["secondary"])
-    bars3 = ax1.bar(x + width, f1, width, label="F1 Score", color=COLORS["success"])
+    ax1.bar(x - width, precision, width, label="Precision", color=COLORS["primary"])
+    ax1.bar(x, recall, width, label="Recall", color=COLORS["secondary"])
+    ax1.bar(x + width, f1, width, label="F1 Score", color=COLORS["success"])
 
     ax1.set_xlabel("Number of Bands (b)", fontsize=11)
     ax1.set_ylabel("Score", fontsize=11)
@@ -184,8 +183,22 @@ def plot_scalability(
     x = np.arange(len(corpus_sizes))
     width = 0.35
 
-    bars1 = ax.bar(x - width / 2, brute_force, width, label="Brute Force O(n²)", color=COLORS["danger"], alpha=0.8)
-    bars2 = ax.bar(x + width / 2, lsh_candidates, width, label="LSH Candidates", color=COLORS["success"], alpha=0.8)
+    ax.bar(
+        x - width / 2,
+        brute_force,
+        width,
+        label="Brute Force O(n²)",
+        color=COLORS["danger"],
+        alpha=0.8,
+    )
+    ax.bar(
+        x + width / 2,
+        lsh_candidates,
+        width,
+        label="LSH Candidates",
+        color=COLORS["success"],
+        alpha=0.8,
+    )
 
     ax.set_xlabel("Corpus Size (documents)", fontsize=11)
     ax.set_ylabel("Number of Comparisons", fontsize=11)
@@ -261,7 +274,16 @@ def plot_pipeline_diagram(
         ax.add_patch(rect)
 
         # Label
-        ax.text(x, y_center, label, ha="center", va="center", fontsize=11, color="white", fontweight="bold")
+        ax.text(
+            x,
+            y_center,
+            label,
+            ha="center",
+            va="center",
+            fontsize=11,
+            color="white",
+            fontweight="bold",
+        )
 
         # Arrow to next stage
         if i < len(stages) - 1:
@@ -286,7 +308,9 @@ def plot_pipeline_diagram(
         ax.text(x, y_center - 1.5, desc, ha="center", va="top", fontsize=9, color=COLORS["gray"])
 
     # Title
-    ax.text(7, 7, "LSH Similarity Pipeline", ha="center", va="center", fontsize=16, fontweight="bold")
+    ax.text(
+        7, 7, "LSH Similarity Pipeline", ha="center", va="center", fontsize=16, fontweight="bold"
+    )
 
     # Complexity annotation
     ax.text(
@@ -335,11 +359,13 @@ def plot_threshold_heatmap(
     # Labels
     ax.set_xticks(np.arange(len(bands_range)))
     ax.set_yticks(np.arange(len(rows_range)))
-    ax.set_xticklabels(bands_range)
-    ax.set_yticklabels(rows_range)
+    ax.set_xticklabels([str(b) for b in bands_range])
+    ax.set_yticklabels([str(r) for r in rows_range])
     ax.set_xlabel("Number of Bands (b)", fontsize=11)
     ax.set_ylabel("Rows per Band (r)", fontsize=11)
-    ax.set_title("LSH Threshold τ by Configuration\n(τ = (1/b)^(1/r))", fontsize=14, fontweight="bold")
+    ax.set_title(
+        "LSH Threshold τ by Configuration\n(τ = (1/b)^(1/r))", fontsize=14, fontweight="bold"
+    )
 
     # Add text annotations
     for i in range(len(rows_range)):
@@ -349,7 +375,7 @@ def plot_threshold_heatmap(
             ax.text(j, i, f"{value:.2f}", ha="center", va="center", color=color, fontsize=10)
 
     # Colorbar
-    cbar = plt.colorbar(im, ax=ax, label="Threshold τ")
+    plt.colorbar(im, ax=ax, label="Threshold τ")
 
     plt.tight_layout()
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -373,11 +399,51 @@ def plot_experiment_results(
 
     # Experiment data
     configs = [
-        {"b": 5, "r": 20, "threshold": 0.923, "precision": 0, "recall": 0, "f1": 0, "candidates": 0},
-        {"b": 10, "r": 10, "threshold": 0.794, "precision": 1.0, "recall": 0.19, "f1": 0.323, "candidates": 12},
-        {"b": 20, "r": 5, "threshold": 0.549, "precision": 1.0, "recall": 0.85, "f1": 0.917, "candidates": 775},
-        {"b": 25, "r": 4, "threshold": 0.447, "precision": 1.0, "recall": 1.0, "f1": 1.0, "candidates": 2187},
-        {"b": 50, "r": 2, "threshold": 0.141, "precision": 1.0, "recall": 1.0, "f1": 1.0, "candidates": 4947},
+        {
+            "b": 5,
+            "r": 20,
+            "threshold": 0.923,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "candidates": 0,
+        },
+        {
+            "b": 10,
+            "r": 10,
+            "threshold": 0.794,
+            "precision": 1.0,
+            "recall": 0.19,
+            "f1": 0.323,
+            "candidates": 12,
+        },
+        {
+            "b": 20,
+            "r": 5,
+            "threshold": 0.549,
+            "precision": 1.0,
+            "recall": 0.85,
+            "f1": 0.917,
+            "candidates": 775,
+        },
+        {
+            "b": 25,
+            "r": 4,
+            "threshold": 0.447,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "candidates": 2187,
+        },
+        {
+            "b": 50,
+            "r": 2,
+            "threshold": 0.141,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "candidates": 4947,
+        },
     ]
 
     bands = [c["b"] for c in configs]
@@ -395,7 +461,10 @@ def plot_experiment_results(
     # Plot 2: F1 Score
     ax2 = axes[0, 1]
     f1_scores = [c["f1"] for c in configs]
-    colors = [COLORS["success"] if f >= 0.9 else COLORS["warning"] if f >= 0.5 else COLORS["danger"] for f in f1_scores]
+    colors = [
+        COLORS["success"] if f >= 0.9 else COLORS["warning"] if f >= 0.5 else COLORS["danger"]
+        for f in f1_scores
+    ]
     ax2.bar(range(len(bands)), f1_scores, color=colors)
     ax2.set_xticks(range(len(bands)))
     ax2.set_xticklabels([f"b={b}" for b in bands])
@@ -428,7 +497,9 @@ def plot_experiment_results(
     ax4.set_xlim(0, 1.1)
     ax4.set_ylim(0, 1.1)
 
-    plt.suptitle("LSH Experiment Results (100 docs, threshold=0.5)", fontsize=14, fontweight="bold", y=1.02)
+    plt.suptitle(
+        "LSH Experiment Results (100 docs, threshold=0.5)", fontsize=14, fontweight="bold", y=1.02
+    )
     plt.tight_layout()
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor="white")
@@ -469,7 +540,9 @@ def generate_all_visualizations(output_dir: str = "docs/images") -> List[str]:
         {"bands": 25, "precision": 1.0, "recall": 1.0, "f1": 1.0, "candidates": 2187},
         {"bands": 50, "precision": 1.0, "recall": 1.0, "f1": 1.0, "candidates": 4947},
     ]
-    paths.append(plot_metrics_comparison(results, output_path=f"{output_dir}/metrics_comparison.png"))
+    paths.append(
+        plot_metrics_comparison(results, output_path=f"{output_dir}/metrics_comparison.png")
+    )
 
     # 3. Scalability
     print("  - Scalability chart...")
